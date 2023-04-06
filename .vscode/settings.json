@@ -1,0 +1,71 @@
+{
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": false,
+  "editor.formatOnSave": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+  "javascript.updateImportsOnFileMove.enabled": "never",
+  "eslint.enable": true,
+  "eslint.run": "onSave",
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "files.eol": "\n",
+  "files.associations": {
+    "*.ejs": "html",
+    "*.ejs.t": "html"
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/node_modules": true,
+    "**/wwwroot": true
+  },
+  "search.exclude": {
+    "**/.git": true,
+    "**/.yarn": true,
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/*.code-search": true,
+    "**/.dist": true,
+    "**/.lib": true,
+    "**/.types": true,
+    "**/.out": true,
+    "**/.pkg": true,
+    "**/.srv": true,
+    "**/.web": true,
+    "**/dist": true,
+    "**/lib": true,
+    "**/types": true,
+    "**/out": true,
+    "**/pkg": true,
+    "**/srv": true,
+    "**/web": true,
+    "**/.angular": true,
+    "**/.vscode": true,
+    "**/*.lock": true,
+    "**/*lock.yaml": true,
+    "**/package-lock.json": true,
+    "**/*.tsbuildinfo": true,
+    "**/*.schema.json": true,
+    "**/.pnp.*": true
+  },
+  "html.format.unformatted": "wbr,%",
+  "debug.internalConsoleOptions": "neverOpen",
+  "npm.packageManager": "pnpm",
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+}

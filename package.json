@@ -1,0 +1,45 @@
+{
+  "name": "@amnis/db-cosmos",
+  "version": "0.0.0",
+  "description": "",
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "type": "module",
+  "files": [
+    "types",
+    "dist"
+  ],
+  "types": "./types/index.d.ts",
+  "main": "./dist/index.umd.cjs",
+  "exports": {
+    ".": {
+      "types": "./types/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "scripts": {
+    "build": "pnpm build:types && pnpm build:dist",
+    "build:dist": "vite build --mode production",
+    "build:types": "tsc -p tsconfig.build.json",
+    "test": "vitest --run"
+  },
+  "devDependencies": {
+    "@amnis/eslint-config-node": "^2.2.4",
+    "@amnis/state": "^0.16.7",
+    "@amnis/tsconfig-node": "^2.2.4",
+    "@reduxjs/toolkit": "2.0.0-alpha.4",
+    "@types/node": "^18.15.11",
+    "dotenv": "^16.0.3",
+    "eslint": "^8.37.0",
+    "standard-version": "^9.5.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.3",
+    "vite": "^4.2.1",
+    "vitest": "^0.29.8"
+  },
+  "dependencies": {
+    "@azure/cosmos": "^3.17.3"
+  }
+}

@@ -1,0 +1,5 @@
+# Source Folder
+src/
+
+# TypeScript Configuration Files
+tsconfig.*
