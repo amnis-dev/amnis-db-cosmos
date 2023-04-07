@@ -1,41 +1,25 @@
 import type {
-  DataDeleter,
-  EntityObjects,
   Database,
 } from '@amnis/state';
-import {
-  noop,
-} from '@amnis/state';
-import { cosmosCreateInitializer } from './create.js';
-import { initialize } from './initialize.js';
 import type { CosmosClientDatabaseOptions } from './cosmos.types.js';
+import { initialize } from './initialize.js';
+import { cosmosCreateInitializer } from './create.js';
+import { cosmosReadInitializer } from './read.js';
+import { cosmosUpdateInitializer } from './update.js';
+import { cosmosDeleteInitializer } from './delete.js';
 
 export const databaseCosmosCreate = async (
   options: CosmosClientDatabaseOptions,
 ): Promise<Database> => {
   const [client, database] = await initialize(options);
+  const interfaceDb = { client, database };
 
   return {
-    initialize: noop,
-    create: cosmosCreateInitializer({ client, database }),
-
-    read: async () => {
-      const result: EntityObjects = {};
-
-      return result;
-    },
-
-    update: async () => {
-      const result: EntityObjects = {};
-
-      return result;
-    },
-
-    delete: async () => {
-      const result: DataDeleter = {};
-
-      return result;
-    },
+    initialize: async () => { /** no operation */ },
+    create: cosmosCreateInitializer(interfaceDb),
+    read: cosmosReadInitializer(interfaceDb),
+    update: cosmosUpdateInitializer(interfaceDb),
+    delete: cosmosDeleteInitializer(interfaceDb),
   };
 };
 

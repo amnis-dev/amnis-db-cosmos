@@ -2,7 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@amnis/eslint-config-node': ^2.2.4
-  '@amnis/state': ^0.16.7
+  '@amnis/state': ^0.16.8
   '@amnis/tsconfig-node': ^2.2.4
   '@azure/cosmos': ^3.17.3
   '@reduxjs/toolkit': 2.0.0-alpha.4
@@ -20,7 +20,7 @@ dependencies:
 
 devDependencies:
   '@amnis/eslint-config-node': 2.2.4_vwh6htx42aidho2qgfca5u5rwm
-  '@amnis/state': 0.16.7_rft32iigwnr3v3bq7tskzevyoi
+  '@amnis/state': link:../amnis-state
   '@amnis/tsconfig-node': 2.2.4_typescript@5.0.3
   '@reduxjs/toolkit': 2.0.0-alpha.4
   '@types/node': 18.15.11
@@ -50,14 +50,6 @@ packages:
       - eslint-import-resolver-webpack
       - supports-color
       - typescript
-    dev: true
-
-  /@amnis/state/0.16.7_rft32iigwnr3v3bq7tskzevyoi:
-    resolution: {integrity: sha512-B5Xp6iwPDFsAv0R7aVB2AtvMyU5zRNjKLwCwWN6st8J03W2a05pgetEVsEWELHURruCSm2p0aETFLfumgOhG0A==}
-    peerDependencies:
-      '@reduxjs/toolkit': '*'
-    dependencies:
-      '@reduxjs/toolkit': 2.0.0-alpha.4
     dev: true
 
   /@amnis/tsconfig-node/2.2.4_typescript@5.0.3:

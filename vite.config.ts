@@ -26,6 +26,14 @@ export default defineConfig({
   test: {
     globals: true,
     testTimeout: 10000,
+    include: [
+      'src/initialize.test.ts',
+      'src/create.test.ts',
+      'src/read.test.ts',
+    ],
     setupFiles: ['./vitest.setup.ts'],
+    sequence: {
+      setupFiles: 'list',
+    },
   },
 });

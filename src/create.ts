@@ -28,8 +28,8 @@ export const cosmosCreateInitializer: CosmosDatabaseMethodInitalizer<DatabaseCre
         if (resource) {
           const {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            id, _rid, _etag, _self, _ts, ...resourceRest
-          } = resource;
+            id, _rid, _etag, _self, _ts, _attachments, ...resourceRest
+          } = resource as any;
           return { ...resourceRest, $id: id };
         }
         return undefined;

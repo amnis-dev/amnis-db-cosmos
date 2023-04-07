@@ -1,60 +1,43 @@
 import type { CosmosClient, Database as CosmosDatabase } from '@azure/cosmos';
+import { databaseMemoryClear, databaseMemory } from '@amnis/state';
 import type { DatabaseCreateMethod } from '@amnis/state';
-import { stateEntitiesCreate, uid } from '@amnis/state';
 import { initialize, initializeClean } from './initialize.js';
 import { cosmosCreateInitializer } from './create.js';
+import { testData, testOptions } from './test/test.js';
 
 let client: CosmosClient;
 let database: CosmosDatabase;
 let createMethod: DatabaseCreateMethod;
 
-const options = {
-  databaseId: 'Test',
-  endpoint: process.env.COSMOS_ENDPOINT ?? '',
-  key: process.env.COSMOS_KEY ?? '',
-  userAgentSuffix: 'CosmosDBTests',
-};
-
 beforeAll(async () => {
-  await initializeClean(options);
-  await initialize(options);
-  const [clientInit, databaseInit] = await initialize(options);
+  databaseMemoryClear();
+  await initializeClean(testOptions);
+  const [clientInit, databaseInit] = await initialize(testOptions);
   client = clientInit;
   database = databaseInit;
   createMethod = cosmosCreateInitializer({ client, database });
 });
 
 test('should create new entities', async () => {
-  const stateEntities = stateEntitiesCreate({
-    todo: [
-      {
-        $id: uid('test'),
-        title: 'Code Interface',
-        completed: false,
-      },
-      {
-        $id: uid('test'),
-        title: 'Unit Test',
-        completed: false,
-      },
-    ],
-    people: [
-      {
-        $id: uid('people'),
-        name: 'John',
-        age: 30,
-      },
-    ],
+  const result = await createMethod(testData);
+
+  expect(Object.keys(result)).toHaveLength(2);
+  Object.entries(result).forEach(([sliceKey, entities]) => {
+    expect(entities).toHaveLength(testData[sliceKey].length);
+    entities.forEach((entity) => {
+      expect(entity.$id).toBeDefined();
+    });
   });
 
-  const result = await createMethod(stateEntities);
+  const resultMemory = await databaseMemory.create(testData);
+  expect(Object.keys(resultMemory)).toHaveLength(2);
+  expect(result).toEqual(resultMemory);
+});
 
-  expect(result.todo).toBeDefined();
-  expect(result.todo).toHaveLength(2);
-  expect(result.todo[0].$id).toBeDefined();
-  expect(result.todo[1].$id).toBeDefined();
+test('should query and receive entities', async () => {
+  const { resources: userResources } = await database.container('user').items.query('SELECT * FROM c').fetchAll();
+  expect(userResources).toHaveLength(4);
 
-  expect(result.people).toBeDefined();
-  expect(result.people).toHaveLength(1);
-  expect(result.people[0].$id).toBeDefined();
+  const { resources: todoResources } = await database.container('todo').items.query('SELECT * FROM c').fetchAll();
+  expect(todoResources).toHaveLength(5);
 });
