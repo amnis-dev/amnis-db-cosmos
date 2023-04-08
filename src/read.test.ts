@@ -1,5 +1,11 @@
-import type { DataQuery, DatabaseCreateMethod, DatabaseReadMethod } from '@amnis/state';
+import type {
+  DataQuery,
+  DatabaseCreateMethod,
+  DatabaseReadMethod,
+  StateScope,
+} from '@amnis/state';
 import {
+  GrantScope,
   databaseMemory,
   databaseMemoryClear,
 } from '@amnis/state';
@@ -46,4 +52,117 @@ test('should query and receive entities', async () => {
   const result = await readMethod(query);
 
   expect(Object.keys(result)).toHaveLength(2);
+  Object.entries(result).forEach(([sliceKey, entities]) => {
+    /**
+     * Check that the number of entities is correct.
+     */
+    expect(entities).toHaveLength(testData[sliceKey].length);
+
+    /**
+     * Check that the entities have an $id property.
+     */
+    entities.forEach((entity) => {
+      expect(entity.$id).toBeDefined();
+    });
+  });
+
+  /**
+   * Compare the result to the memory database.
+   */
+  const resultMemory = await databaseMemory.read(query);
+  expect(result).toEqual(resultMemory);
+});
+
+test('should query users and todo with a limit', async () => {
+  const query: DataQuery = {
+    user: {
+      $range: {
+        limit: 1,
+      },
+    },
+    todo: {
+      $range: {
+        limit: 1,
+      },
+    },
+  };
+
+  const result = await readMethod(query);
+  expect(Object.keys(result)).toHaveLength(2);
+  expect(result.user).toHaveLength(1);
+  expect(result.todo).toHaveLength(1);
+
+  /**
+   * Compare the result to the memory database.
+   */
+  const resultMemory = await databaseMemory.read(query);
+  expect(result).toEqual(resultMemory);
+});
+
+test('should query users and todo with a limit and start range', async () => {
+  const query: DataQuery = {
+    user: {
+      $range: {
+        limit: 1,
+        start: 1,
+      },
+    },
+    todo: {
+      $range: {
+        limit: 1,
+        start: 1,
+      },
+    },
+  };
+
+  const result = await readMethod(query);
+  expect(Object.keys(result)).toHaveLength(2);
+  expect(result.user).toHaveLength(1);
+  expect(result.todo).toHaveLength(1);
+
+  /**
+   * Compare the result to the memory database.
+   */
+  const resultMemory = await databaseMemory.read(query);
+  expect(result).toEqual(resultMemory);
+});
+
+test('should query users and order them by handle', async () => {
+  const query: DataQuery = {
+    user: {
+      $order: ['handle', 'asc'],
+    },
+  };
+
+  const result = await readMethod(query);
+  expect(Object.keys(result)).toHaveLength(1);
+  expect(result.user).toHaveLength(testData.user.length);
+
+  /**
+   * Compare the result to the memory database.
+   */
+  const resultMemory = await databaseMemory.read(query);
+  expect(result).toEqual(resultMemory);
+});
+
+test('should query todo scoped by owner grant', async () => {
+  const query: DataQuery = {
+    todo: {},
+  };
+
+  const scope: StateScope = {
+    todo: GrantScope.Owned,
+  };
+
+  const subject = testData.user[0].$id;
+
+  const result = await readMethod(query, { scope, subject });
+  expect(Object.keys(result)).toHaveLength(1);
+  expect(result.todo).toHaveLength(2);
+
+  /**
+   * Compare the result to the memory database.
+   */
+  const resultMemory = await databaseMemory.read(query, { scope, subject });
+  expect(result).toEqual(resultMemory);
 });

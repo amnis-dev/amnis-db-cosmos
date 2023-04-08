@@ -10,6 +10,7 @@ import {
 } from '@amnis/state';
 import type { JSONValue, SqlParameter, SqlQuerySpec } from '@azure/cosmos';
 import type { CosmosDatabaseMethodInitalizer } from './cosmos.types.js';
+import { convertDollarKeys, itemsToEntities } from './utility.js';
 
 type SqlScoping = { offset: number, limit: number, orderBy: string, orderDir: 'ASC' | 'DESC'};
 
@@ -32,7 +33,7 @@ const sqlOperatorMap: SqlOperatorMap = {
  * Ensures a number is within the given range and is a whole number
  */
 const clamp = (value: number, min: number, max: number): number => {
-  const rounded = Math.round(value);
+  const rounded = parseInt(`${Math.round(value)}`, 10);
   if (rounded < min) {
     return min;
   }
@@ -97,7 +98,7 @@ export const cosmosReadInitializer: CosmosDatabaseMethodInitalizer<DatabaseReadM
   Promise<[string, Entity[] | undefined]>
   >(async ([sliceKey, options]) => {
     const scopeSlice = scope?.[sliceKey];
-    if (scope && scopeSlice) {
+    if (scope && !scopeSlice) {
       return [sliceKey, undefined];
     }
 
@@ -119,27 +120,30 @@ export const cosmosReadInitializer: CosmosDatabaseMethodInitalizer<DatabaseReadM
     };
 
     const {
-      $query = {},
+      $query: $queryRaw = {},
       $range = {},
-      $order = {},
+      $order = ['id', 'asc'],
     } = options;
+    const $query = convertDollarKeys($queryRaw);
 
     const {
       start = 0,
       limit = 20,
     } = $range;
 
-    const {
-      key = 'id',
-      direction = 'asc',
-    } = $order;
+    const [
+      by,
+      direction,
+    ] = $order;
+
+    const byConverted = by === '$id' ? 'id' : by.replace('$', 'd_');
 
     /**
      * Set the SQL offset limit parameters.
      */
     sqlScoping.offset = clamp(start, 0, 1024);
     sqlScoping.limit = clamp(limit, 0, 128);
-    sqlScoping.orderBy = regexJsonKey.test(key) ? key : 'id';
+    sqlScoping.orderBy = regexJsonKey.test(byConverted) ? byConverted : 'id';
     sqlScoping.orderDir = direction === 'asc' ? 'ASC' : 'DESC';
 
     /**
@@ -154,7 +158,7 @@ export const cosmosReadInitializer: CosmosDatabaseMethodInitalizer<DatabaseReadM
       if (typeof subject !== 'string') {
         return [sliceKey, undefined];
       }
-      sqlFilters.$eq.$owner = subject;
+      sqlFilters.$eq.d_owner = subject;
     }
 
     /**
@@ -190,18 +194,9 @@ export const cosmosReadInitializer: CosmosDatabaseMethodInitalizer<DatabaseReadM
       ).fetchAll();
 
       /**
-     * Map the CosmosDB resources to the Amnis Entity format.
-     */
-      const entities = resources.map<Entity>((resource) => {
-        const {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          id, _rid, _etag, _self, _ts, _attachments, ...rest
-        } = resource;
-        return {
-          ...rest,
-          $id: id,
-        };
-      });
+       * Map the CosmosDB resources to the Amnis Entity format.
+       */
+      const entities = itemsToEntities(resources);
 
       /**
        * Return the slice key and the entities.

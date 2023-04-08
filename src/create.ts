@@ -1,6 +1,7 @@
 import type { DatabaseCreateMethod, Entity, EntityObjects } from '@amnis/state';
 import { initializeCheck, initializeContainer } from './initialize.js';
 import type { CosmosDatabaseMethodInitalizer } from './cosmos.types.js';
+import { entityToItem } from './utility.js';
 
 export const cosmosCreateInitializer: CosmosDatabaseMethodInitalizer<DatabaseCreateMethod> = ({
   client,
@@ -20,17 +21,10 @@ export const cosmosCreateInitializer: CosmosDatabaseMethodInitalizer<DatabaseCre
       await initializeContainer(database, sliceKey);
 
       const createPromises = entities.map<Promise<Entity | undefined>>(async (entity) => {
-        const { $id, ...rest } = entity;
-        const { resource } = await database.container(sliceKey).items.create({
-          ...rest,
-          id: $id,
-        });
+        const item = entityToItem(entity);
+        const { resource } = await database.container(sliceKey).items.create(item);
         if (resource) {
-          const {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            id, _rid, _etag, _self, _ts, _attachments, ...resourceRest
-          } = resource as any;
-          return { ...resourceRest, $id: id };
+          return entity;
         }
         return undefined;
       });
@@ -42,9 +36,9 @@ export const cosmosCreateInitializer: CosmosDatabaseMethodInitalizer<DatabaseCre
     },
   );
 
-  // /**
-  //  * Update the result with the entities that were successfully created.
-  //  */
+  /**
+   * Update the result with the entities that were successfully created.
+   */
   const containerResults = await Promise.all(containerPromises);
   containerResults.forEach(([sliceKey, entities]) => {
     result[sliceKey] = entities;

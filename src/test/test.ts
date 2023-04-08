@@ -52,7 +52,7 @@ const todo = [
   {
     $id: uid('todo'),
     title: 'Create Blueprint',
-    completed: true,
+    completed: false,
     $owner: user[1].$id,
   },
   {
