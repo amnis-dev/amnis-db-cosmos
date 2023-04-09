@@ -1,0 +1,61 @@
+name: Integrity Check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+
+env:
+  # The endpoint to access to Azure Cosmos Emulator.
+  COSMOS_ENDPOINT: https://localhost:8081
+  # This is the key the Azure Cosmos Emulator uses.
+  COSMOS_KEY: C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
+
+jobs:
+
+  audit:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@v3
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - name: Audit Packages
+        run: pnpm audit --audit-level moderate
+
+  test:
+    runs-on: windows-latest
+
+    steps:
+
+      - uses: southpolesteve/cosmos-emulator-github-action@v1
+
+      - uses: actions/checkout@v3
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - name: Setup NodeJS with PNPM Caching
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+      
+      - name: Install NodeJS Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint for Code-Style Errors
+        run: pnpm lint
+
+      - name: Run Unit Tests
+        run: pnpm test
+
+      - name: Run Build
+        run: pnpm build

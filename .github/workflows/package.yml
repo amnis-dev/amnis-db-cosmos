@@ -1,0 +1,38 @@
+name: Package
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build_and_publish:
+    runs-on: ubuntu-latest
+    name: Build and Publish
+
+    steps:
+
+    - name: Checkout Respository
+      uses: actions/checkout@v3
+
+    - uses: pnpm/action-setup@v2
+      with:
+        version: latest
+
+    - name: Setup NodeJS with PNPM Caching
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18.x'
+        registry-url: 'https://registry.npmjs.org'
+        scope: '@amnis'
+        cache: 'pnpm'
+
+    - name: Install NodeJS Dependencies
+      run: pnpm install --frozen-lockfile
+
+    - name: Build Project
+      run: pnpm build
+
+    - name: Publish Project
+      run: pnpm publish --access public
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

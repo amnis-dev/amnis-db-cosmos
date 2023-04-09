@@ -16,19 +16,25 @@
     ".": {
       "types": "./types/index.d.ts",
       "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "require": "./dist/index.umd.cjs"
     }
   },
   "scripts": {
     "build": "pnpm build:types && pnpm build:dist",
     "build:dist": "vite build --mode production",
     "build:types": "tsc -p tsconfig.build.json",
-    "test": "vitest --run"
+    "test": "vitest --run",
+    "lint": "tsc --noEmit && eslint --ext .ts --ext .tsx \"./\""
+  },
+  "peerDependencies": {
+    "@amnis/state": "^0",
+    "@azure/cosmos": "^3.17.3"
   },
   "devDependencies": {
     "@amnis/eslint-config-node": "^2.2.4",
     "@amnis/state": "^0.16.8",
     "@amnis/tsconfig-node": "^2.2.4",
+    "@azure/cosmos": "^3.17.3",
     "@reduxjs/toolkit": "2.0.0-alpha.4",
     "@types/node": "^18.15.11",
     "dotenv": "^16.0.3",
@@ -38,8 +44,5 @@
     "typescript": "^5.0.3",
     "vite": "^4.2.1",
     "vitest": "^0.29.8"
-  },
-  "dependencies": {
-    "@azure/cosmos": "^3.17.3"
   }
 }

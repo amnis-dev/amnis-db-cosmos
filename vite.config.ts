@@ -9,17 +9,19 @@ export default defineConfig({
       entry: {
         index: resolve(__dirname, 'src/index.ts'),
       },
-      name: 'AmnisState',
+      name: 'AmnisDbCosmos',
     },
     rollupOptions: {
       output: {
         exports: 'named',
         globals: {
-          '@reduxjs/toolkit': 'ReduxToolkit',
+          '@amnis/state': 'AmnisState',
+          '@azure/cosmos': 'CosmosClient',
         },
       },
       external: [
-        '@reduxjs/toolkit',
+        '@amnis/state',
+        '@azure/cosmos',
       ],
     },
   },
