@@ -22,11 +22,16 @@ export const cosmosCreateInitializer: CosmosDatabaseMethodInitalizer<DatabaseCre
 
       const createPromises = entities.map<Promise<Entity | undefined>>(async (entity) => {
         const item = entityToItem(entity);
-        const { resource } = await database.container(sliceKey).items.create(item);
-        if (resource) {
-          return entity;
+
+        try {
+          const { resource } = await database.container(sliceKey).items.create(item);
+          if (resource) {
+            return entity;
+          }
+          return undefined;
+        } catch (error) {
+          return undefined;
         }
-        return undefined;
       });
 
       const createResults = await Promise.all(createPromises);
