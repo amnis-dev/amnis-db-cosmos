@@ -37,7 +37,7 @@ jobs:
       - name: Start Azure Cosmos Emulator
         run: |
           Import-Module "$env:ProgramFiles\Azure Cosmos DB Emulator\PSModules\Microsoft.Azure.CosmosDB.Emulator"
-          Start-CosmosDbEmulator -Key $env:COSMOS_KEY 
+          Start-CosmosDbEmulator -Key $env:COSMOS_KEY -NoUI -NoFirewall
 
 
       - uses: actions/checkout@v3
