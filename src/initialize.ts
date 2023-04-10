@@ -1,6 +1,6 @@
 import { CosmosClient } from '@azure/cosmos';
 import type { Database as CosmosDatabase } from '@azure/cosmos';
-import type { CosmosClientDatabaseOptions } from './cosmos.types.js';
+import type { CosmosClientDatabaseOptions, CosmosDatabaseMethodContext } from './cosmos.types.js';
 
 /**
  * Check if the client and database has been initialized.
@@ -19,11 +19,12 @@ export const initializeCheck = (
 export const initializeContainer = async (
   database: CosmosDatabase,
   containerId: string,
-  partitionKey = '/id',
+  partitionKey = '$id',
 ) => {
+  const partitionCosmos = partitionKey === '$id' ? 'id' : partitionKey.replace('$', 'd_');
   await database.containers.createIfNotExists({
     id: containerId,
-    partitionKey,
+    partitionKey: `/${partitionCosmos}`,
   });
 };
 
@@ -32,17 +33,31 @@ export const initializeContainer = async (
  */
 export const initialize = async (
   options: CosmosClientDatabaseOptions,
-): Promise<[CosmosClient, CosmosDatabase]> => {
-  const client = new CosmosClient(options);
+): Promise<CosmosDatabaseMethodContext> => {
+  const {
+    databaseId,
+    partitions: customPartitions = {},
+    ...clientOptions
+  } = options;
+  const client = new CosmosClient(clientOptions);
+
+  /**
+   * Set default partition keys.
+   */
+  const partitions = {
+    handle: 'name',
+    history: '$subject',
+    ...customPartitions,
+  };
 
   /**
    * Initialize the database and create it if it doesn't exist.
    */
   const { database } = await client.databases.createIfNotExists({
-    id: options.databaseId,
+    id: databaseId,
   });
 
-  return [client, database];
+  return { client, database, partitions };
 };
 
 /**

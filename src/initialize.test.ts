@@ -16,6 +16,6 @@ const options = {
 // });
 
 test('should pass if initialized', async () => {
-  const [client, database] = await initialize(options);
+  const { client, database } = await initialize(options);
   expect(() => initializeCheck(client, database)).not.toThrow();
 });

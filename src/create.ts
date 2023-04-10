@@ -6,6 +6,7 @@ import { entityToItem } from './utility.js';
 export const cosmosCreateInitializer: CosmosDatabaseMethodInitalizer<DatabaseCreateMethod> = ({
   client,
   database,
+  partitions,
 }) => async (state) => {
   initializeCheck(client, database);
 
@@ -18,7 +19,8 @@ export const cosmosCreateInitializer: CosmosDatabaseMethodInitalizer<DatabaseCre
   Promise<[string, Entity[]]>
   >(
     async ([sliceKey, entities]) => {
-      await initializeContainer(database, sliceKey);
+      const partitionKey = partitions[sliceKey];
+      await initializeContainer(database, sliceKey, partitionKey);
 
       const createPromises = entities.map<Promise<Entity | undefined>>(async (entity) => {
         const item = entityToItem(entity);

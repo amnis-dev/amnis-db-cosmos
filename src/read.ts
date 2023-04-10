@@ -3,10 +3,12 @@ import type {
   DatabaseReadMethod,
   Entity,
   EntityObjects,
+  History,
 } from '@amnis/state';
 import {
   regexJsonKey,
   GrantScope,
+  historySlice,
 } from '@amnis/state';
 import type { JSONValue, SqlParameter, SqlQuerySpec } from '@azure/cosmos';
 import type { CosmosDatabaseMethodInitalizer } from './cosmos.types.js';
@@ -95,11 +97,15 @@ export const cosmosReadInitializer: CosmosDatabaseMethodInitalizer<DatabaseReadM
   const result: EntityObjects = {};
 
   const readPromises = Object.entries(state).map<
-  Promise<[string, Entity[] | undefined]>
+  Promise<[
+    string,
+    Entity[] | undefined,
+    Entity<History>[] | undefined
+  ]>
   >(async ([sliceKey, options]) => {
     const scopeSlice = scope?.[sliceKey];
     if (scope && !scopeSlice) {
-      return [sliceKey, undefined];
+      return [sliceKey, undefined, undefined];
     }
 
     const sqlScoping: SqlScoping = {
@@ -123,6 +129,7 @@ export const cosmosReadInitializer: CosmosDatabaseMethodInitalizer<DatabaseReadM
       $query: $queryRaw = {},
       $range = {},
       $order = ['id', 'asc'],
+      $history,
     } = options;
     const $query = convertDollarKeys($queryRaw);
 
@@ -156,7 +163,7 @@ export const cosmosReadInitializer: CosmosDatabaseMethodInitalizer<DatabaseReadM
      */
     if (scopeSlice === GrantScope.Owned) {
       if (typeof subject !== 'string') {
-        return [sliceKey, undefined];
+        return [sliceKey, undefined, undefined];
       }
       sqlFilters.$eq.d_owner = subject;
     }
@@ -199,11 +206,30 @@ export const cosmosReadInitializer: CosmosDatabaseMethodInitalizer<DatabaseReadM
       const entities = itemsToEntities(resources);
 
       /**
+       * If the history flag is set, fetch the history for each entity.
+       */
+      if ($history) {
+        const subjectIds = resources.map((resource) => resource.id);
+        const { resources: resourcesHistory } = await database.container(
+          historySlice.key,
+        ).items.query({
+          query: `SELECT * FROM c WHERE c.d_subject IN (${subjectIds.map((subjectId) => `"${subjectId}"`).join(',')})`,
+        }).fetchAll();
+
+        const histories = itemsToEntities(resourcesHistory) as Entity<History>[];
+
+        /**
+         * Return with history.
+         */
+        return [sliceKey, entities, histories];
+      }
+
+      /**
        * Return the slice key and the entities.
        */
-      return [sliceKey, entities];
+      return [sliceKey, entities, undefined];
     } catch (e) {
-      return [sliceKey, undefined];
+      return [sliceKey, undefined, undefined];
     }
   });
 
@@ -211,9 +237,12 @@ export const cosmosReadInitializer: CosmosDatabaseMethodInitalizer<DatabaseReadM
    * Wait for all read promises to resolve and return the result.
    */
   const readResults = await Promise.all(readPromises);
-  readResults.forEach(([sliceKey, entities]) => {
+  readResults.forEach(([sliceKey, entities, histories]) => {
     if (entities) {
       result[sliceKey] = entities;
+      if (histories) {
+        result[historySlice.key] = histories;
+      }
     }
   });
 

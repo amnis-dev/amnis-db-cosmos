@@ -11,8 +11,7 @@ import { cosmosDeleteInitializer } from './delete.js';
 export const databaseCosmosCreate = async (
   options: CosmosClientDatabaseOptions,
 ): Promise<Database> => {
-  const [client, database] = await initialize(options);
-  const interfaceDb = { client, database };
+  const interfaceDb = await initialize(options);
 
   return {
     initialize: async () => { /** no operation */ },

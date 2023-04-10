@@ -6,6 +6,7 @@ import { convertDollarKeys, itemToEntity } from './utility.js';
 
 export const cosmosUpdateInitializer: CosmosDatabaseMethodInitalizer<DatabaseUpdateMethod> = ({
   database,
+  partitions,
 }) => async (state, controls = {}) => {
   const { scope, subject } = controls;
   const result: EntityObjects = {};
@@ -17,8 +18,19 @@ export const cosmosUpdateInitializer: CosmosDatabaseMethodInitalizer<DatabaseUpd
         return [sliceKey, []];
       }
 
+      const partition = partitions[sliceKey];
+
       const updatePromises = updates.map<Promise<Entity | undefined>>(async (update) => {
         const { $id, ...rest } = update;
+        const partitionValue = partition && rest[partition];
+
+        /**
+         * Remove the partition key from the update object.
+         */
+        if (partitionValue) {
+          delete rest[partition];
+        }
+
         const partial = convertDollarKeys(rest);
 
         const operations = Object.entries(partial).map<PatchOperation>(
@@ -36,7 +48,10 @@ export const cosmosUpdateInitializer: CosmosDatabaseMethodInitalizer<DatabaseUpd
         }
 
         try {
-          const { resource } = await database.container(sliceKey).item($id, $id).patch({
+          const { resource } = await database.container(sliceKey).item(
+            $id,
+            partitionValue ?? $id,
+          ).patch({
             operations,
             condition: conditions.join(' AND '),
           });

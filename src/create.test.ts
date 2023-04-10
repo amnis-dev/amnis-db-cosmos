@@ -1,21 +1,18 @@
-import type { CosmosClient, Database as CosmosDatabase } from '@azure/cosmos';
 import { databaseMemoryClear, databaseMemory } from '@amnis/state';
 import type { DatabaseCreateMethod } from '@amnis/state';
 import { initialize, initializeClean } from './initialize.js';
 import { cosmosCreateInitializer } from './create.js';
 import { testData, testOptions } from './test/test.js';
+import type { CosmosDatabaseMethodContext } from './cosmos.types.js';
 
-let client: CosmosClient;
-let database: CosmosDatabase;
+let cosmosContext: CosmosDatabaseMethodContext;
 let createMethod: DatabaseCreateMethod;
 
 beforeAll(async () => {
   databaseMemoryClear();
   await initializeClean(testOptions);
-  const [clientInit, databaseInit] = await initialize(testOptions);
-  client = clientInit;
-  database = databaseInit;
-  createMethod = cosmosCreateInitializer({ client, database });
+  cosmosContext = await initialize(testOptions);
+  createMethod = cosmosCreateInitializer(cosmosContext);
 });
 
 test('should create new entities', async () => {
@@ -35,9 +32,9 @@ test('should create new entities', async () => {
 });
 
 test('should query and receive entities', async () => {
-  const { resources: userResources } = await database.container('user').items.query('SELECT * FROM c').fetchAll();
+  const { resources: userResources } = await cosmosContext.database.container('user').items.query('SELECT * FROM c').fetchAll();
   expect(userResources).toHaveLength(4);
 
-  const { resources: todoResources } = await database.container('todo').items.query('SELECT * FROM c').fetchAll();
+  const { resources: todoResources } = await cosmosContext.database.container('todo').items.query('SELECT * FROM c').fetchAll();
   expect(todoResources).toHaveLength(5);
 });

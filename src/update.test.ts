@@ -11,38 +11,32 @@ import {
   databaseMemory,
   databaseMemoryClear,
 } from '@amnis/state';
-import type {
-  CosmosClient,
-  Database as CosmosDatabase,
-} from '@azure/cosmos';
 import { initialize, initializeClean } from './initialize.js';
 import { testData, testOptions } from './test/test.js';
 import { cosmosUpdateInitializer } from './update.js';
 import { cosmosCreateInitializer } from './create.js';
+import type { CosmosDatabaseMethodContext } from './cosmos.types.js';
 
-let client: CosmosClient;
-let database: CosmosDatabase;
+let cosmosContext: CosmosDatabaseMethodContext;
 let createMethod: DatabaseCreateMethod;
 let updateMethod: DatabaseUpdateMethod;
 
 beforeAll(async () => {
   databaseMemoryClear();
   await initializeClean(testOptions);
-  const [clientInit, databaseInit] = await initialize(testOptions);
-  client = clientInit;
-  database = databaseInit;
+  cosmosContext = await initialize(testOptions);
 
   /**
    * Create test data for the read tests.
    */
   databaseMemory.create(testData);
-  createMethod = cosmosCreateInitializer({ client, database });
+  createMethod = cosmosCreateInitializer(cosmosContext);
   await createMethod(testData);
 
   /**
    * Initialize the read method.
    */
-  updateMethod = cosmosUpdateInitializer({ client, database });
+  updateMethod = cosmosUpdateInitializer(cosmosContext);
 });
 
 test('should update the name of several test data entities', async () => {
