@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.1](https://github.com/amnis-dev/amnis-db-cosmos/compare/v0.1.0...v0.1.1) (2023-04-11)
+
+
+### Features
+
+* **History:** History entities can now be included with queries ([d2b6d18](https://github.com/amnis-dev/amnis-db-cosmos/commit/d2b6d1803c4af4e442cd984e1d400792facef59e))
+
 ## 0.1.0 (2023-04-09)
 
 
