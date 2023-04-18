@@ -20,12 +20,22 @@ export const initializeContainer = async (
   database: CosmosDatabase,
   containerId: string,
   partitionKey = '$id',
-) => {
+): Promise<boolean> => {
   const partitionCosmos = partitionKey === '$id' ? 'id' : partitionKey.replace('$', 'd_');
-  await database.containers.createIfNotExists({
-    id: containerId,
-    partitionKey: `/${partitionCosmos}`,
-  });
+
+  try {
+    await database.containers.createIfNotExists({
+      id: containerId,
+      partitionKey: `/${partitionCosmos}`,
+      maxThroughput: 1000,
+    });
+
+    return true;
+  } catch (error) {
+    console.error(error);
+
+    return false;
+  }
 };
 
 /**
@@ -34,30 +44,34 @@ export const initializeContainer = async (
 export const initialize = async (
   options: CosmosClientDatabaseOptions,
 ): Promise<CosmosDatabaseMethodContext> => {
-  const {
-    databaseId,
-    partitions: customPartitions = {},
-    ...clientOptions
-  } = options;
-  const client = new CosmosClient(clientOptions);
+  try {
+    const {
+      databaseId,
+      partitions: customPartitions = {},
+      ...clientOptions
+    } = options;
+    const client = new CosmosClient(clientOptions);
 
-  /**
+    /**
    * Set default partition keys.
    */
-  const partitions = {
-    handle: 'name',
-    history: '$subject',
-    ...customPartitions,
-  };
+    const partitions = {
+      handle: 'name',
+      history: '$subject',
+      ...customPartitions,
+    };
 
-  /**
+    /**
    * Initialize the database and create it if it doesn't exist.
    */
-  const { database } = await client.databases.createIfNotExists({
-    id: databaseId,
-  });
+    const { database } = await client.databases.createIfNotExists({
+      id: databaseId,
+    });
 
-  return { client, database, partitions };
+    return { client, database, partitions };
+  } catch (error) {
+    throw new Error(JSON.stringify(error, null, 2));
+  }
 };
 
 /**

@@ -5,8 +5,8 @@ devDependencies:
     specifier: ^2.2.4
     version: 2.2.4(eslint@8.37.0)(typescript@5.0.3)
   '@amnis/state':
-    specifier: ^0.16.9
-    version: 0.16.9(@reduxjs/toolkit@2.0.0-alpha.4)
+    specifier: ^0.16.11
+    version: 0.16.11(@reduxjs/toolkit@2.0.0-alpha.4)
   '@amnis/tsconfig-node':
     specifier: ^2.2.4
     version: 2.2.4(typescript@5.0.3)
@@ -61,8 +61,8 @@ packages:
       - typescript
     dev: true
 
-  /@amnis/state@0.16.9(@reduxjs/toolkit@2.0.0-alpha.4):
-    resolution: {integrity: sha512-G0h8jvLKL1GVNrk4wX+++aW1jVms2ydu2mDTtw1oa3Q0OXvWoy+OcL0fKO3dWW2XGwzpWsPUPxxBmVXbfvf9rg==}
+  /@amnis/state@0.16.11(@reduxjs/toolkit@2.0.0-alpha.4):
+    resolution: {integrity: sha512-1WFWLQQJyIUN+rub+4IOd93DmjvHCi3lB1LxYQL+Oui8etGW4vkI5jCNPAtY58MjFcf1l2QFPpupV6W6ymBB5w==}
     peerDependencies:
       '@reduxjs/toolkit': '*'
     dependencies:

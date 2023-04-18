@@ -20,7 +20,10 @@ export const cosmosCreateInitializer: CosmosDatabaseMethodInitalizer<DatabaseCre
   >(
     async ([sliceKey, entities]) => {
       const partitionKey = partitions[sliceKey];
-      await initializeContainer(database, sliceKey, partitionKey);
+      const resultInitContainer = await initializeContainer(database, sliceKey, partitionKey);
+      if (!resultInitContainer) {
+        return [sliceKey, []];
+      }
 
       const createPromises = entities.map<Promise<Entity | undefined>>(async (entity) => {
         const item = entityToItem(entity);
