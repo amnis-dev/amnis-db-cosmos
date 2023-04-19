@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.2](https://github.com/amnis-dev/amnis-db-cosmos/compare/v0.1.1...v0.1.2) (2023-04-19)
+
+
+### Features
+
+* **Handling:** Added addtional catches for error handling ([82063ae](https://github.com/amnis-dev/amnis-db-cosmos/commit/82063ae21b6757620ed4c60992853d3fef0768c0))
+
+
+### Bug Fixes
+
+* **Container:** Containers no longer initialize with throughput ([2a426b4](https://github.com/amnis-dev/amnis-db-cosmos/commit/2a426b4531491786e7ff8551216979fae8c75b38))
+
 ### [0.1.1](https://github.com/amnis-dev/amnis-db-cosmos/compare/v0.1.0...v0.1.1) (2023-04-11)
 
 
