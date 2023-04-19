@@ -27,7 +27,6 @@ export const initializeContainer = async (
     await database.containers.createIfNotExists({
       id: containerId,
       partitionKey: `/${partitionCosmos}`,
-      maxThroughput: 1000,
     });
 
     return true;
