@@ -160,3 +160,22 @@ test('should query todo scoped by owner grant', async () => {
   const resultMemory = await databaseMemory.read(query, { scope, subject });
   expect(result).toEqual(resultMemory);
 });
+
+test('should query a single todo by id', async () => {
+  const query: DataQuery = {
+    todo: {
+      $query: {
+        $id: {
+          $eq: testData.todo[0].$id,
+        },
+      },
+    },
+  };
+
+  const result = await readMethod(query);
+  expect(Object.keys(result)).toHaveLength(1);
+  expect(result.todo).toHaveLength(1);
+
+  const todoItem = result.todo[0];
+  expect(todoItem.$id).toEqual(testData.todo[0].$id);
+});

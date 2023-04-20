@@ -8,6 +8,10 @@ import type { CosmosItem } from './cosmos.types.js';
 export const convertDollarKeys = <T extends Record<string, any>>(obj: T): T => {
   const newObj: T = Object.entries(obj).reduce<T>((acc, [key, value]) => {
     if (key.startsWith('$')) {
+      if (key === '$id') {
+        acc['id' as keyof T] = value;
+        return acc;
+      }
       acc[`d_${key.slice(1)}` as keyof T] = value;
     } else {
       acc[key as keyof T] = value;
