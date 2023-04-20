@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.3](https://github.com/amnis-dev/amnis-db-cosmos/compare/v0.1.2...v0.1.3) (2023-04-20)
+
+
+### Features
+
+* **Amnis:** Bumped amnis version to 18 ([c492722](https://github.com/amnis-dev/amnis-db-cosmos/commit/c492722fa684d152adc5cb4f80495a19100ad09d))
+
+
+### Bug Fixes
+
+* **Read:** Fixed issue with using  in a read query ([07b797a](https://github.com/amnis-dev/amnis-db-cosmos/commit/07b797afb644c1c8864a2a7897d6f6d3cf79a31d))
+
 ### [0.1.2](https://github.com/amnis-dev/amnis-db-cosmos/compare/v0.1.1...v0.1.2) (2023-04-19)
 
 
