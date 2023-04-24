@@ -74,7 +74,20 @@ const buildSqlQuerySpec = (
 
     Object.entries(filter).forEach(([key, value]) => {
       const parameterName = `@${key}`;
-      filterParts.push(`c.${key} ${sqlOperator} ${parameterName}`);
+
+      switch (sqlOperator) {
+        case sqlOperatorMap.$in:
+          filterParts.push(`ARRAY_CONTAINS(${parameterName}, c.${key})`);
+          break;
+
+        case sqlOperatorMap.$nin:
+          filterParts.push(`NOT ARRAY_CONTAINS(${parameterName}, c.${key})`);
+          break;
+
+        default:
+          filterParts.push(`c.${key} ${sqlOperator} ${parameterName}`);
+      }
+
       parameters.push({ name: parameterName, value });
     });
   });
@@ -238,11 +251,9 @@ export const cosmosReadInitializer: CosmosDatabaseMethodInitalizer<DatabaseReadM
    */
   const readResults = await Promise.all(readPromises);
   readResults.forEach(([sliceKey, entities, histories]) => {
-    if (entities) {
-      result[sliceKey] = entities;
-      if (histories) {
-        result[historySlice.key] = histories;
-      }
+    result[sliceKey] = entities ?? [];
+    if (entities && histories) {
+      result[historySlice.key] = histories;
     }
   });
 

@@ -179,3 +179,19 @@ test('should query a single todo by id', async () => {
   const todoItem = result.todo[0];
   expect(todoItem.$id).toEqual(testData.todo[0].$id);
 });
+
+test('should query several ids for todo', async () => {
+  const query: DataQuery = {
+    todo: {
+      $query: {
+        $id: {
+          $in: [testData.todo[0].$id, testData.todo[1].$id],
+        },
+      },
+    },
+  };
+
+  const result = await readMethod(query);
+  expect(Object.keys(result)).toHaveLength(1);
+  expect(result.todo).toHaveLength(2);
+});
