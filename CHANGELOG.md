@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.4](https://github.com/amnis-dev/amnis-db-cosmos/compare/v0.1.3...v0.1.4) (2023-04-24)
+
+
+### Bug Fixes
+
+* **Read:** Resolved issue querying for arrays with the  keyword ([6ae54c1](https://github.com/amnis-dev/amnis-db-cosmos/commit/6ae54c1aea55b038bd60186612973a37d3492772))
+
 ### [0.1.3](https://github.com/amnis-dev/amnis-db-cosmos/compare/v0.1.2...v0.1.3) (2023-04-20)
 
 
