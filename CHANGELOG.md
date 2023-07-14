@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.2.1](https://github.com/amnis-dev/amnis-db-cosmos/compare/v0.2.0...v0.2.1) (2023-07-14)
+
+
+### Bug Fixes
+
+* packages ([f195faa](https://github.com/amnis-dev/amnis-db-cosmos/commit/f195faa8dbcf9662ca21f241cd7f05e22361193d))
+
 ## [0.2.0](https://github.com/amnis-dev/amnis-db-cosmos/compare/v0.1.4...v0.2.0) (2023-07-14)
 
 
