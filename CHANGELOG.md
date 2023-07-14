@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.2.0](https://github.com/amnis-dev/amnis-db-cosmos/compare/v0.1.4...v0.2.0) (2023-07-14)
+
+
+### Features
+
+* **Dependencies:** Updated core packages ([895bd98](https://github.com/amnis-dev/amnis-db-cosmos/commit/895bd984f924fe7cb10a9b66fc70ef6f6023c8de))
+* **Workflow:** Added release workflow ([33c93d9](https://github.com/amnis-dev/amnis-db-cosmos/commit/33c93d98577920c2d51fd3152541318e17baeb20))
+
+
+### Bug Fixes
+
+* **lock:** resolved lock file ([e2b3b05](https://github.com/amnis-dev/amnis-db-cosmos/commit/e2b3b05c054f6d7bbcd58ee6baca1bdedbd4be69))
+* **Packages:** fixed semver ([dbef6e3](https://github.com/amnis-dev/amnis-db-cosmos/commit/dbef6e318193e12841270f239af0fabd8e4d6250))
+
 ### [0.1.5](https://github.com/amnis-dev/amnis-db-cosmos/compare/v0.1.4...v0.1.5) (2023-04-26)
 
 ### [0.1.4](https://github.com/amnis-dev/amnis-db-cosmos/compare/v0.1.3...v0.1.4) (2023-04-24)
