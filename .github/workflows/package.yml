@@ -1,8 +1,6 @@
 name: Package
 
-on:
-  release:
-    types: [created]
+on: workflow_dispatch
 
 jobs:
   build_and_publish:

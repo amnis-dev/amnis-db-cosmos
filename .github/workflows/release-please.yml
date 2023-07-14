@@ -1,0 +1,57 @@
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+name: release-please
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: google-github-actions/release-please-action@v3
+      id: release
+      with:
+        release-type: node
+        package-name: release-please-action
+
+    - name: Checkout Respository
+      uses: actions/checkout@v3
+      if: ${{ steps.release.outputs.release_created }}
+      
+
+    - uses: pnpm/action-setup@v2
+      with:
+        version: latest
+      if: ${{ steps.release.outputs.release_created }}
+
+    - name: Setup NodeJS with PNPM Caching
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18.x'
+        registry-url: 'https://registry.npmjs.org'
+        scope: '@amnis'
+        cache: 'pnpm'
+      if: ${{ steps.release.outputs.release_created }}
+
+    - name: Install NodeJS Dependencies
+      run: pnpm install --frozen-lockfile
+      if: ${{ steps.release.outputs.release_created }}
+
+    - name: Update Amnis Dependencies
+      run: pnpm up "@amnis/*"
+      if: ${{ steps.release.outputs.release_created }}
+
+    - name: Build Project
+      run: pnpm build
+      if: ${{ steps.release.outputs.release_created }}
+
+    - name: Publish Project
+      run: pnpm publish --access public
+      if: ${{ steps.release.outputs.release_created }}
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
