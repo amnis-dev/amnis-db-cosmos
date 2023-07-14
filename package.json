@@ -20,14 +20,14 @@
     }
   },
   "scripts": {
-    "release:patch": "standard-version --release-as patch",
-    "release:minor": "standard-version --release-as minor",
-    "release:major": "standard-version --release-as major",
     "build": "pnpm build:types && pnpm build:dist",
     "build:dist": "vite build --mode production",
     "build:types": "tsc -p tsconfig.build.json",
     "test": "vitest --run",
     "lint": "tsc --noEmit && eslint --ext .ts --ext .tsx \"./\""
+  },
+  "resolutions": {
+    "semver": "7.5.3"
   },
   "peerDependencies": {
     "@amnis/state": "^0",
